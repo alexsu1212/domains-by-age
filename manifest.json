@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Domains by Age",
+  "version": "1.0.0",
+  "description": "扫描当前页面上的所有域名，查询注册时间，按从新到旧排序。",
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "action": {
+    "default_title": "Domains by Age",
+    "default_icon": {
+      "16": "icons/16.png",
+      "48": "icons/48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["activeTab", "scripting", "storage", "clipboardWrite"],
+  "host_permissions": ["https://whois.freeaiapi.xyz/*"]
+}
