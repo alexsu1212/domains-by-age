@@ -11,7 +11,7 @@
   const CONCURRENCY = 5;
   const PATTERN = '\\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+(?:' + SUFFIXES.join('|') + ')\\b';
 
-  const PAGE_CSS = '.dba-date{color:#2e7d32;font-weight:700;background:#e8f5e8;padding:1px 3px;border-radius:2px;font-size:.9em;margin-right:2px}.dba-flash{outline:2px solid #ff9800;outline-offset:2px}';
+  const PAGE_CSS = '.dba-date{color:#2e7d32;font-weight:700;background:#e8f5e8;padding:1px 3px;border-radius:2px;font-size:.9em;margin-right:2px}.dba-domain{scroll-margin-top:20vh}.dba-target{outline:2px solid #e53935;outline-offset:2px;border-radius:2px}';
 
   const PANEL_CSS = `
     .panel{position:fixed;top:12px;right:12px;width:380px;max-height:88vh;display:flex;flex-direction:column;background:#1e1e1e;color:#f5f5f5;font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:2147483647;overflow:hidden}
@@ -102,7 +102,8 @@
     return { textNodes, domains };
   }
 
-  // Insert "(YYYY.MM)" before each dated domain on the page.
+  // Wrap each domain on the page so a row click can find it, and insert
+  // "(YYYY.MM)" before the ones with a known date.
   function decorate(textNodes, map, spanMap) {
     const re = new RegExp(PATTERN, 'gi');
     textNodes.forEach((node) => {
@@ -115,16 +116,20 @@
         if (isEmail(text, m.index)) continue;
         const d = m[0].toLowerCase();
         const ym = map[d];
-        if (!ym) continue;
         changed = true;
         frag.appendChild(document.createTextNode(text.slice(last, m.index)));
-        const span = document.createElement('span');
-        span.className = 'dba-date';
-        span.textContent = '(' + ym + ')';
-        frag.appendChild(span);
-        frag.appendChild(document.createTextNode(m[0]));
+        if (ym) {
+          const date = document.createElement('span');
+          date.className = 'dba-date';
+          date.textContent = '(' + ym + ')';
+          frag.appendChild(date);
+        }
+        const wrap = document.createElement('span');
+        wrap.className = 'dba-domain';
+        wrap.textContent = m[0];
+        frag.appendChild(wrap);
         last = m.index + m[0].length;
-        (spanMap[d] = spanMap[d] || []).push(span);
+        (spanMap[d] = spanMap[d] || []).push(wrap);
       }
       if (!changed) return;
       frag.appendChild(document.createTextNode(text.slice(last)));
@@ -166,14 +171,15 @@
       }, 1200);
     });
     row.append(name, date, open, copy);
-    // Clicking the row itself jumps to the domain's spot on the page.
+    // Clicking the row itself scrolls the domain near the top of the window
+    // (scroll-margin leaves room for sticky headers) and boxes it in red.
     row.addEventListener('click', () => {
-      const targets = spanMap[item.domain];
-      if (!targets || !targets.length) return;
-      const el = targets[0];
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      el.classList.add('dba-flash');
-      setTimeout(() => el.classList.remove('dba-flash'), 1600);
+      const targets = spanMap[item.domain] || [];
+      const el = targets.find((t) => t.getClientRects().length) || targets[0];
+      if (!el) return;
+      clearTarget();
+      el.classList.add('dba-target');
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     return row;
   }
@@ -199,16 +205,22 @@
     return { host, status: root.querySelector('.status'), list: root.querySelector('.list') };
   }
 
+  function clearTarget() {
+    document.querySelectorAll('.dba-target').forEach((e) => e.classList.remove('dba-target'));
+  }
+
   function close() {
     if (!run) return;
+    clearTarget();
     run.cancelled = true;
     run.host.remove();
     run = null;
   }
 
   async function start() {
-    // Drop dates left by a previous scan so they aren't doubled.
+    // Undo a previous scan's markup so dates and wrappers aren't doubled.
     document.querySelectorAll('.dba-date').forEach((s) => s.remove());
+    document.querySelectorAll('.dba-domain').forEach((s) => s.replaceWith(...s.childNodes));
 
     const { textNodes, domains } = collect();
 

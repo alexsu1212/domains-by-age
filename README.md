@@ -18,7 +18,7 @@
 - **页面内标注**：扫描完成后，页面上每个域名前面会加一个绿色的 `(年.月)` 标签，不用切换视线就能看出新旧。
 - **open**：在后台新标签页打开这个网站，当前页面不跳走，方便一个个点开看。
 - **copy**：把域名复制到剪贴板，按钮变成 ✓ 表示成功。
-- **定位**：点列表里某一行（按钮以外的地方），页面会滚动到这个域名出现的位置并闪一下高亮。
+- **定位**：点列表里某一行（按钮以外的地方），页面会把这个域名滚动到靠近窗口顶部的位置，并用红框圈出来（再点另一行或关闭面板时红框消失）。
 - **有缓存**：查过的域名会记住，下次在任何网站上遇到都直接显示，不再重复查询。
 
 ## 安装
@@ -115,7 +115,7 @@ docs/             说明文档用的截图
 - Shows the registration month (`YYYY.MM`) for each domain, sorted newest first.
 - After the scan, adds a green `(YYYY.MM)` label next to each domain on the page.
 - **open** opens the site in a background tab. **copy** copies the domain.
-- Click a row to scroll to where that domain appears on the page.
+- Click a row to scroll that domain near the top of the window, outlined in red.
 - Caches results locally, so domains you've already looked up show up instantly on any site.
 
 **Install**
