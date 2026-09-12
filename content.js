@@ -218,7 +218,7 @@
     document.body.appendChild(ui.host);
 
     if (!domains.length) {
-      ui.status.textContent = '页面上没有找到域名';
+      ui.status.textContent = 'No domains found on this page';
       return;
     }
 
@@ -236,7 +236,7 @@
     const map = {};
     let done = 0;
     let idx = 0;
-    ui.status.textContent = '共 ' + total + ' 个域名，查询中…';
+    ui.status.textContent = 'Found ' + total + ' domains, looking up…';
 
     // Rows are created once and re-ordered, so button feedback survives updates.
     const render = () => {
@@ -260,7 +260,7 @@
         if (ym) map[domain] = ym;
         results.push({ domain, ym });
         done++;
-        ui.status.textContent = '已处理 ' + done + '/' + total;
+        ui.status.textContent = 'Checked ' + done + '/' + total;
         render();
       }
     };

@@ -40,7 +40,7 @@ Edge、Brave、Arc 等基于 Chromium 的浏览器也可以用同样的方法安
 
 1. 打开任意网页。
 2. 点工具栏上的 **Domains by Age** 图标。
-3. 右上角出现面板，显示「已处理 x/y」进度，查完后显示 `Done!`。
+3. 右上角出现面板，显示 `Checked x/y` 进度，查完后显示 `Done! N domains total`；页面上没有域名时显示 `No domains found on this page`。
 4. 看完了点面板右上角的 **×**，或者再点一次图标关闭面板；关闭后再点一次图标会重新扫描。
 
 ### 面板里每一列是什么
